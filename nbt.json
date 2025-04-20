@@ -1,0 +1,13 @@
+{
+  "name": "<raritycolor><pet>",
+  "lore": [
+    "§7§8Pet",
+    "§7",
+    "§7§aOn Head:",
+    "§7§8- §6<1-25>⛃/s",
+    "§7§8- §b<5-10>✦/s",
+    "§7",
+    "§7<rarity>"
+  ],
+  "nbt": "{id:\"minecraft:stone\",Count:1b,tag:{display:{Lore:[0:\"§7§8Pet\",1:\"§7\",2:\"§7§aOn Head:\",3:\"§7§8- §6<1-25>⛃/s\",4:\"§7§8- §b<5-10>✦/s\",5:\"§7\",6:\"§7<rarity>\"],Name:\"<raritycolor><pet>\"}},Damage:0s}"
+}
