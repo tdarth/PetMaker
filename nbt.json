@@ -7,7 +7,8 @@
     "§7§8- §6<1-25>⛃/s",
     "§7§8- §b<5-10>✦/s",
     "§7",
-    "§7<rarity>"
+    "§7<rarity>",
+    "§cThis is the default pet styling. See how to modify this in §4/petmaker§c."
   ],
-  "nbt": "{id:\"minecraft:stone\",Count:1b,tag:{display:{Lore:[0:\"§7§8Pet\",1:\"§7\",2:\"§7§aOn Head:\",3:\"§7§8- §6<1-25>⛃/s\",4:\"§7§8- §b<5-10>✦/s\",5:\"§7\",6:\"§7<rarity>\"],Name:\"<raritycolor><pet>\"}},Damage:0s}"
+  "nbt": "{id:\"minecraft:stone\",Count:1b,tag:{display:{Lore:[0:\"§7§8Pet\",1:\"§7\",2:\"§7§aOn Head:\",3:\"§7§8- §6<1-25>⛃/s\",4:\"§7§8- §b<5-10>✦/s\",5:\"§7\",6:\"§7<rarity>\",7:\"§cThis is the default pet styling. See how to modify this in §4/petmaker§c.\"],Name:\"<raritycolor><pet>\"}},Damage:0s}"
 }

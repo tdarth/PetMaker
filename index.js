@@ -68,75 +68,80 @@ register("guiMouseClick", (x, y, button, gui, event) => {
 
       if (selectedOption === "Config") return (ChatLib.command("petmaker", true), isGuiOpen = false);
 
-      let nbtData = FileLib.read("PetMaker", "nbt.json");
-      if (!nbtData) return ChatLib.chat(`${chatPrefix} &c&lError: &fFailed to &7read data&f from &cnbt.json.`);
-
-      let parsedNBT = JSON.parse(nbtData);
-
-      let rarity = selectedOption;
-      let rarityIndex = settings.rarityNames.split(",").map(rarity => rarity.trim()).filter(rarity => rarity.length > 0).indexOf(rarity);
-
-      let rawRarityColor = settings[`rc${rarityIndex}`] || "";
-      let rarityColor = rawRarityColor.split("").map(char => `§${char}`).join("");
-      let boldedRarityColor = settings.addBolding ? rarityColor + "§l" : rarityColor;
-
-      let selectedItemNBTString = selectedItemNBT.toString();
-      let selectedItemName = selectedItemNBTString.match(/Name:"(.*?)"/)?.[1].removeFormatting() || "Unknown Item";
-
-      let newName = parsedNBT.name
-        .replace(/<rarity>/g, `${boldedRarityColor}${rarity}`)
-        .replace(/<raritycolor>/g, rarityColor)
-        .replace(/<pet>/g, selectedItemName);
-
-      let newLore = parsedNBT.lore.map(line =>
-        line
+      try {
+        let nbtData = FileLib.read("PetMaker", "nbt.json");
+        if (!nbtData) return ChatLib.chat(`${chatPrefix} &c&lError: &fFailed to &7read data&f from &cnbt.json.`);
+  
+        let parsedNBT = JSON.parse(nbtData);
+  
+        let rarity = selectedOption;
+        let rarityIndex = settings.rarityNames.split(",").map(rarity => rarity.trim()).filter(rarity => rarity.length > 0).indexOf(rarity);
+  
+        let rawRarityColor = settings[`rc${rarityIndex}`] || "";
+        let rarityColor = rawRarityColor.split("").map(char => `§${char}`).join("");
+        let boldedRarityColor = settings.addBolding ? rarityColor + "§l" : rarityColor;
+  
+        let selectedItemNBTString = selectedItemNBT.toString();
+        let selectedItemName = selectedItemNBTString.match(/Name:"(.*?)"/)?.[1].removeFormatting() || "Unknown Item";
+  
+        let newName = parsedNBT.name
           .replace(/<rarity>/g, `${boldedRarityColor}${rarity}`)
           .replace(/<raritycolor>/g, rarityColor)
-          .replace(/<pet>/g, selectedItemName)
-      );
-
-      newName = newName.replace(/<(\d+)-(\d+)>/g, (match, min, max) => {
-        return Math.floor(Math.random() * (parseInt(max) - parseInt(min) + 1)) + parseInt(min);
-      });
-
-      newLore = newLore.map(line =>
-        line.replace(/<(\d+)-(\d+)>/g, (match, min, max) => {
+          .replace(/<pet>/g, selectedItemName);
+  
+        let newLore = parsedNBT.lore.map(line =>
+          line
+            .replace(/<rarity>/g, `${boldedRarityColor}${rarity}`)
+            .replace(/<raritycolor>/g, rarityColor)
+            .replace(/<pet>/g, selectedItemName)
+        );
+  
+        newName = newName.replace(/<(\d+)-(\d+)>/g, (match, min, max) => {
           return Math.floor(Math.random() * (parseInt(max) - parseInt(min) + 1)) + parseInt(min);
-        })
-      );
-
-      let formattedLore = newLore.map(line => `"${line}"`).join(",");
-
-      let nbtString = selectedItemNBT.toString();
-
-      if (!/display:\{/.test(nbtString)) {
-        nbtString = nbtString.replace(/tag:\{/, `tag:{display:{},`);
-      }
-
-      nbtString = nbtString.replace(/Name:"(.*?)"/, `Name:"${newName}"`);
-
-      if (/Lore:\[.*?\]/.test(nbtString)) {
-        nbtString = nbtString.replace(/Lore:\[.*?\]/, `Lore:[${formattedLore}]`);
-      } else {
-        nbtString = nbtString.replace(/display:\{/, `display:{Lore:[${formattedLore}],`);
-      }
-
-      let modifiedItem = getItemFromNBT(nbtString).itemStack;
-
-      let foundSlot = false;
-
-      for (let i = 9; i < 36; i++) {
-        if (!Player.getInventory().getItems()[i]) {
-          loadItemstack(modifiedItem, i);
-          foundSlot = true;
-          break;
+        });
+  
+        newLore = newLore.map(line =>
+          line.replace(/<(\d+)-(\d+)>/g, (match, min, max) => {
+            return Math.floor(Math.random() * (parseInt(max) - parseInt(min) + 1)) + parseInt(min);
+          })
+        );
+  
+        let formattedLore = newLore.map(line => `"${line}"`).join(",");
+  
+        let nbtString = selectedItemNBT.toString();
+  
+        if (!/display:\{/.test(nbtString)) {
+          nbtString = nbtString.replace(/tag:\{/, `tag:{display:{},`);
         }
+  
+        nbtString = nbtString.replace(/Name:"(.*?)"/, `Name:"${newName}"`);
+  
+        if (/Lore:\[.*?\]/.test(nbtString)) {
+          nbtString = nbtString.replace(/Lore:\[.*?\]/, `Lore:[${formattedLore}]`);
+        } else {
+          nbtString = nbtString.replace(/display:\{/, `display:{Lore:[${formattedLore}],`);
+        }
+  
+        let modifiedItem = getItemFromNBT(nbtString).itemStack;
+  
+        let foundSlot = false;
+  
+        for (let i = 9; i < 36; i++) {
+          if (!Player.getInventory().getItems()[i]) {
+            loadItemstack(modifiedItem, i);
+            foundSlot = true;
+            break;
+          }
+        }
+  
+        if (!foundSlot) ChatLib.chat(`${chatPrefix} &c&lError: &fNo &7open slot &ffound to give item.`);
+        else foundSlot = false;
+
+        setTimeout(() => { isGuiOpen = false; }, 100);
+      } catch (e) {
+        ChatLib.chat(`${chatPrefix} &c&lError: &4${e}\n&7(Does the item have a name? Default names are not supported.)`);
+        setTimeout(() => { isGuiOpen = false; }, 100);
       }
-
-      if (!foundSlot) ChatLib.chat(`${chatPrefix} &c&lError: &fNo &7open slot &ffound to give item.`);
-      else foundSlot = false;
-
-      setTimeout(() => { isGuiOpen = false; }, 100);
     }
   });
 });
@@ -220,6 +225,17 @@ register("command", () => {
     console.error(error);
   }
 }).setName("getpet").setAliases("petget", "gp");
+
+register("command", () => {
+  if (Player.asPlayerMP().player.field_71075_bZ.field_75098_d === false) return ChatLib.chat(`${chatPrefix} &c&lError: &fYou must be in &aCreative&f mode.`);
+  try {
+    let item = "{id:\"minecraft:stone\",Count:1b,tag:{display:{Lore:[0:\"§7§8Pet\",1:\"§7\",2:\"§7§aOn Head:\",3:\"§7§8- §6<1-25>⛃/s\",4:\"§7§8- §b<5-10>✦/s\",5:\"§7\",6:\"§7<rarity>\",7:\"§cThis is the default pet styling. See how to modify this in §4/petmaker§c.\"],Name:\"<raritycolor><pet>\"}},Damage:0s}";
+    loadItemstack(getItemFromNBT(item).itemStack, Player.getHeldItemIndex() + 36);
+  } catch (error) {
+    ChatLib.chat(`${chatPrefix} &c&lError: &fAn unexpected error occurred in &6&l/examplepet&f.`);
+    console.error(error);
+  }
+}).setName("examplepet").setAliases("petexample", "ep");
 
 // why is simpleconfig relying on an api to fetch module images anyways?
 const File = Java.type("java.io.File");

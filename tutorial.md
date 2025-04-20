@@ -11,6 +11,10 @@ To setup this module, first &agrab any item&f and &dformat it&f how you want you
 &f &f **&2<raritycolor>** - The &7rarity color code&7 of the selected option.
 &f &f **&2<number-number>** - Replaced by a &7random number&f in the range of the two values.
 
+Type &e&l/examplepet for an example item.
+
 &f
 
-[View my other Projects!](https://github.com/tdarth)
+#### &bLinks
+&f &f [Showcase of this Module & Video Tutorial.](https://www.youtube.com/watch?v=MjhZ4Yfo_OQ)
+&f &f [View my other Projects!](https://github.com/tdarth)
